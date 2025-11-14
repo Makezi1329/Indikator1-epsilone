@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EPSILONE Gram Calc System | Indikator XAU/USD</title>
+    
+    <link rel="icon" type="image/png" href="favicon.png">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;800&family=Roboto:wght@300;400&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* --- ROOT VARIABLES --- */
+        :root {
+            --bg-darkest: #010a11;
+            --bg-fog: #0d1e2e;
+            --accent-gold: #d4af37;
+            --logo-cyan: #7DD3D8;
+            --text-primary: #e6f1f5;
+            --text-secondary: #8892b0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth; /* Membuat scroll ke #harga lebih mulus */
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            color: var(--text-primary);
+            line-height: 1.6;
+            background-color: var(--bg-darkest);
+            background-image:
+                radial-gradient(circle at 50% 30%, rgba(20, 40, 60, 0.4) 0%, transparent 70%),
+                linear-gradient(to bottom, var(--bg-fog) 0%, var(--bg-darkest) 100%);
+            background-attachment: fixed;
+            background-size: cover;
+            min-height: 100vh;
+        }
+
+        /* --- HEADER WITH LOGO --- */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 0 5%;
+            height: 90px;
+            display: flex;
+            align-items: center;
+            z-index: 1000;
+            background: rgba(1, 10, 17, 0.85);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transition: height 0.3s ease, padding 0.3s ease; 
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 15px; 
+        }
+
+        .logo-image {
+            height: 120px;
+            width: auto;
+            transition: height 0.3s ease;
+        }
+        
+        .logo-container a {
+            line-height: 1; 
+        }
+
+        /* CSS UNTUK HEADER SAAT SCROLL */
+        .header.header-scrolled {
+            height: 70px; 
+            background: rgba(1, 10, 17, 0.95);
+        }
+
+        .header.header-scrolled .logo-image {
+            height: 70px;
+        }
+        
+        /* --- HERO SECTION --- */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 120px 5% 60px; 
+            text-align: center;
+            position: relative;
+        }
+
+        /* --- JUDUL SECTION UMUM --- */
+        .section-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2.5em; 
+            font-weight: 800;
+            color: var(--text-primary);
+            text-align: center;
+            margin-bottom: 50px;
+            letter-spacing: 1px;
+            position: relative;
+        }
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 3px;
+            background: var(--logo-cyan);
+            margin: 15px auto 0;
+        }
+
+        .hero-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 3em;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .hero-subtitle {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.5em;
+            font-weight: 300;
+            color: var(--logo-cyan);
+            margin-bottom: 30px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            animation: fadeInUp 1s ease-out 0.2s both;
+        }
+
+        .hero-text {
+            max-width: 700px;
+            font-size: 1.2em;
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+            line-height: 1.8;
+            animation: fadeInUp 1s ease-out 0.3s both;
+        }
+
+        /* === CSS ANIMASI SCROLL DIMULAI === */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .hidden-fade {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .visible-fade {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        /* === CSS ANIMASI SCROLL SELESAI === */
+
+        /* --- CTA BUTTON --- */
+        .cta-button {
+            padding: 18px 40px;
+            background: var(--logo-cyan); /* Dibuat solid agar lebih menonjol */
+            color: var(--bg-darkest); /* Teks gelap */
+            border: 2px solid var(--logo-cyan);
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            font-size: 1.1em; /* Sedikit lebih besar */
+            letter-spacing: 2px;
+            text-decoration: none;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            border-radius: 4px;
+            display: inline-block;
+            animation: fadeInUp 1s ease-out 0.4s both;
+        }
+        
+        .cta-button:hover {
+            background: transparent;
+            color: var(--logo-cyan);
+            box-shadow: 0 0 30px rgba(125, 211, 216, 0.6);
+            transform: translateY(-2px);
+        }
+
+        /* --- CARDS SECTION (FITUR INDIKATOR) --- */
+        .features-section {
+            padding: 80px 5%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        .feature-card {
+            background: rgba(10, 25, 40, 0.6);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 40px 30px;
+            border-radius: 12px;
+            transition: transform 0.3s ease, border-color 0.3s ease, opacity 0.6s ease-out, transform 0.6s ease-out;
+            text-align: center;
+        }
+        .feature-card:hover {
+            border-color: var(--logo-cyan);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.6);
+        }
+        .card-icon {
+            font-size: 3em;
+            margin-bottom: 20px;
+            color: var(--logo-cyan); /* Ganti warna ikon jadi cyan */
+        }
+        .card-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.4em;
+            color: var(--text-primary);
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        .card-text {
+            color: var(--text-secondary);
+            font-size: 1em;
+            line-height: 1.7;
+        }
+
+        /* === CSS BARU UNTUK SCREENSHOT === */
+        .showcase-section {
+            padding: 80px 5%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .screenshot-image {
+            width: 100%;
+            height: auto;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 40px;
+            background-color: #0d1e2e; /* Warna placeholder jika gambar gagal dimuat */
+        }
+        .screenshot-caption {
+            text-align: center;
+            font-size: 1.1em;
+            color: var(--text-secondary);
+            font-style: italic;
+            margin-top: -20px;
+            margin-bottom: 60px;
+        }
+
+        /* === CSS BARU UNTUK HARGA === */
+        .pricing-section {
+            padding: 80px 5%;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .pricing-card {
+            background: rgba(10, 25, 40, 0.6);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--logo-cyan); /* Border cyan agar menonjol */
+            padding: 40px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 0 40px rgba(125, 211, 216, 0.2);
+        }
+        .pricing-card h3 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.8em;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .pricing-card .price {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 3.5em;
+            font-weight: 800;
+            color: var(--logo-cyan);
+            margin: 20px 0;
+        }
+        .pricing-card .price span {
+            font-size: 0.4em;
+            font-weight: 400;
+            color: var(--text-secondary);
+        }
+        .pricing-card ul {
+            list-style: none;
+            margin-bottom: 30px;
+        }
+        .pricing-card li {
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        /* --- CSS FAQ (DESAIN BARU) --- */
+        .faq-section {
+            padding: 80px 5%;
+            max-width: 900px; 
+            margin: 0 auto;
+        }
+        .faq-container { }
+        .faq-item {
+            background: rgba(10, 25, 40, 0.6);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            margin-bottom: 20px; 
+            padding: 10px 25px; 
+            transition: border-color 0.3s ease, opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .faq-item:hover {
+            border-color: var(--logo-cyan);
+        }
+        .faq-question {
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            width: 100%;
+            padding: 20px 0; 
+            text-align: left;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.2em;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .faq-question span {
+            flex: 1; 
+            padding-right: 20px;
+        }
+        i.faq-icon {
+            font-size: 1.2em;
+            color: var(--logo-cyan);
+            transition: transform 0.3s ease;
+        }
+        .faq-answer {
+            max-height: 0; 
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        .faq-answer p {
+            padding: 0 0 25px 0; 
+            color: var(--text-secondary);
+            font-size: 1em;
+            line-height: 1.7;
+            border-top: 1px solid rgba(255, 255, 255, 0.1); 
+            padding-top: 20px; 
+        }
+        .faq-answer p b {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+        .faq-item.active .faq-answer {
+            max-height: 500px; 
+            transition: max-height 0.5s ease-in;
+        }
+        .faq-item.active i.faq-icon {
+            transform: rotate(180deg); 
+        }
+        /* --- CSS FAQ SELESAI --- */
+
+        /* --- ABOUT DISCLAIMER SECTION --- */
+        .about-disclaimer {
+            padding: 40px 5%; 
+            max-width: 1200px;
+            margin: 0 auto;
+            color: var(--text-secondary);
+            font-size: 0.9em;
+            text-align: center;
+            position: relative; 
+            margin-top: 60px; 
+        }
+        .about-disclaimer::after {
+            content: '';
+            display: block;
+            width: 100%;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.05); 
+            position: absolute;
+            bottom: 0;
+            left: 0;
+        }
+
+        /* --- FOOTER --- */
+        .footer {
+            padding: 40px 5%;
+            background-color: var(--bg-darkest);
+        }
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .footer-column h4 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.2em;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+        }
+        .footer-column.social {
+            text-align: left;
+        }
+        .footer-social-links a {
+            display: inline-block;
+            color: var(--text-secondary);
+            font-size: 1.5em;
+            margin-right: 20px;
+            transition: color 0.3s ease;
+        }
+        .footer-social-links a:hover {
+            color: var(--logo-cyan);
+        }
+        .footer-column.contact {
+            text-align: right;
+        }
+        .footer-contact-list {
+            list-style: none;
+        }
+        .footer-contact-list li {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 15px;
+            margin-bottom: 15px;
+            font-size: 0.9em;
+        }
+        .footer-contact-list i {
+            font-size: 1.1em;
+            color: var(--logo-cyan);
+            width: 20px;
+            text-align: center;
+        }
+        .footer-contact-list a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        .footer-contact-list a:hover {
+            color: var(--text-primary);
+        }
+        .footer-about {
+            padding: 40px 0;
+            margin: 40px 0 0 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--text-secondary);
+            font-size: 0.9em;
+            text-align: center;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .footer-bottom {
+            margin-top: 40px;
+            padding-top: 0;
+            border-top: none;
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.9em;
+        }
+        .footer-bottom a {
+            color: var(--logo-cyan);
+            text-decoration: none;
+            margin: 0 10px;
+        }
+        .footer-bottom a:hover {
+            text-decoration: underline;
+        }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 900px) {
+            .header {
+                padding: 0 5%;
+                height: 70px;
+            }
+            .logo-image {
+                height: 70px;
+            }
+            .hero {
+                padding-top: 100px; 
+            }
+            .hero-title {
+                font-size: 2em;
+            }
+            .hero-subtitle {
+                font-size: 1.1em;
+            }
+            .hero-text {
+                font-size: 1em;
+            }
+            .grid-3 {
+                grid-template-columns: 1fr;
+            }
+            .footer-grid {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            .footer-column.social {
+                text-align: center;
+            }
+            .footer-column.contact {
+                text-align: center;
+            }
+            .footer-contact-list li {
+                justify-content: center;
+            }
+            .faq-question {
+                font-size: 1.1em;
+                padding: 20px 5px; 
+            }
+            .faq-item {
+                padding: 5px 20px; 
+            }
+            .faq-answer p {
+                padding: 15px 5px 20px 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <div class="logo-container">
+            <a href="index.html">
+                <img src="epsilone_logo.png" alt="EPSILONE Logo" class="logo-image">
+            </a>
+        </div>
+    </header>
+
+    <section class="hero">
+        <h1 class="hero-title">Stop Menebak.<br>Mulai Trading dengan Presisi.</h1>
+        <p class="hero-subtitle">Memperkenalkan EPSILONE Gram Calc System v6.1</p>
+        
+        <p class="hero-text">
+            Sistem sinyal all-in-one untuk TradingView yang dirancang khusus untuk XAU/USD. Dilengkapi Dashboard Multi-Timeframe, sinyal konfirmasi berlapis, dan Kalkulator Gram Emas eksklusif.
+        </p>
+
+        <!-- Link ini mengarah ke section 'harga' di bawah -->
+        <a href="#harga" class="cta-button">
+            Lihat Harga & Dapatkan Akses
+        </a>
+    </section>
+
+    <section class="features-section">
+        <h2 class="section-title">Fitur Unggulan</h2>
+        <div class="grid-3">
+            <div class="feature-card hidden-fade">
+                <div class="card-icon"><i class="fas fa-layer-group"></i></div>
+                <h3 class="card-title">Dashboard Multi-Timeframe</h3>
+                <p class="card-text">Lihat tren M15, M30, H1, dan H4 secara instan. Jangan pernah lagi trading melawan tren besar hanya karena Anda di chart M5.</p>
+            </div>
+            <div class="feature-card hidden-fade">
+                <div class="card-icon"><i class="fas fa-crosshairs"></i></div>
+                <h3 class="card-title">Sinyal Presisi (Non-Repaint)</h3>
+                <p class="card-text">Dapatkan sinyal BUY/SELL dari strategi inti "Candle Terjepit" yang dikonfirmasi oleh Rejection, AO/DeMarker, dan LRO Reversion.</p>
+            </div>
+            <div class="feature-card hidden-fade">
+                <div class="card-icon"><i class="fas fa-calculator"></i></div>
+                <h3 class="card-title">Kalkulator Gram Emas</h3>
+                <p class="card-text">Fitur unik untuk trader XAUIDR. Hitung harga beli emas per gram di aplikasi Anda (termasuk spread admin) secara real-time.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- === BAGIAN BARU: SHOWCASE SCREENSHOT === -->
+    <section class="showcase-section">
+        <h2 class="section-title hidden-fade">Lihat Aksi Indikator Kami</h2>
+
+        <img src="screenshot-1.jpg" alt="Contoh Sinyal BUY EPSILONE Gram Calc System" class="screenshot-image hidden-fade">
+        <p class="screenshot-caption hidden-fade">Dashboard Multi-Timeframe mendeteksi tren Bullish, dikonfirmasi Sinyal BUY LRO Reversion.</p>
+
+        <img src="screenshot-2.jpg" alt="Contoh Sinyal SELL EPSILONE Gram Calc System" class="screenshot-image hidden-fade">
+        <p class="screenshot-caption hidden-fade">Zona "Candle Terjepit" H1 terbentuk, diikuti Sinyal SELL Rejection di M5.</p>
+
+        <img src="screenshot-3.jpg" alt="Contoh Kalkulator Gram Emas" class="screenshot-image hidden-fade">
+        <p class="screenshot-caption hidden-fade">Kalkulator Emas (Gram) unik kami menghitung harga beli real-time di chart XAUIDR.</p>
+    </section>
+    
+    <!-- === BAGIAN BARU: HARGA === -->
+    <section class="pricing-section" id="harga">
+        <h2 class="section-title hidden-fade">Dapatkan Akses Anda</h2>
+        <div class="pricing-card hidden-fade">
+            <h3>Akses Lifetime</h3>
+            <div class="price">Rp 500.000 <span>/sekali bayar</span></div>
+            <ul>
+                <li><i class="fas fa-check" style="color: var(--logo-cyan);"></i> Akses seumur hidup</li>
+                <li><i class="fas fa-check" style="color: var(--logo-cyan);"></i> Gratis update selamanya</li>
+                <li><i class="fas fa-check" style="color: var(--logo-cyan);"></i> Panduan & Support Penuh</li>
+            </ul>
+            <a href="https://wa.me/6281213483500?text=Halo%2C%20MAKE.%20Saya%20tertarik%20untuk%20membeli%20indikator%20EPSILONE%20Gram%20Calc%20System%20(Lifetime)." class="cta-button" target="_blank">
+                Dapatkan Sekarang
+            </a>
+        </div>
+    </section>
+
+    <!-- === BAGIAN FAQ (KONTEN DIPERBARUI) === -->
+    <section class="faq-section">
+        <h2 class="section-title hidden-fade">Frequently Asked Questions (FAQ)</h2>
+        <div class="faq-container">
+            
+            <div class="faq-item hidden-fade">
+                <button class="faq-question">
+                    <span>Apakah indikator ini *Non-Repaint*?</span>
+                    <i class="fas fa-chevron-down faq-icon"></i>
+                </button>
+                <div class="faq-answer">
+                    <p><b>Ya, 100% Non-Repaint.</b> Sinyal yang sudah muncul di candle yang telah tertutup (closed candle) tidak akan pernah hilang atau bergeser. Kami menggunakan `barstate.isconfirmed` dalam kode kami untuk memastikan sinyal hanya muncul sekali dan valid.</p>
+                </div>
+            </div>
+
+            <div class="faq-item hidden-fade">
+                <button class="faq-question">
+                    <span>Di platform apa indikator ini bekerja?</span>
+                    <i class="fas fa-chevron-down faq-icon"></i>
+                </button>
+                <div class="faq-answer">
+                    <p>Indikator ini dibuat khusus untuk **TradingView**. Indikator ini tidak bisa digunakan di platform lain seperti MetaTrader 4 (MT4) atau MetaTrader 5 (MT5).</p>
+                </div>
+            </div>
+
+            <div class="faq-item hidden-fade">
+                <button class="faq-question">
+                    <span>Untuk pair dan timeframe apa indikator ini cocok?</span>
+                    <i class="fas fa-chevron-down faq-icon"></i>
+                </button>
+                <div class="faq-answer">
+                    <p>Indikator ini dirancang, diuji, dan dioptimalkan secara khusus untuk **XAU/USD (Emas)**. Fitur Kalkulator Gram Emas juga dirancang untuk chart **XAUIDR**. Meskipun secara teori bisa diterapkan di pair lain, kami sangat merekomendasikan penggunaannya hanya di Emas pada timeframe M5, M15, dan H1.</p>
+                </div>
+            </div>
+
+            <div class="faq-item hidden-fade">
+                <button class="faq-question">
+                    <span>Apakah saya dijamin pasti profit?</span>
+                    <i class="fas fa-chevron-down faq-icon"></i>
+                </button>
+                <div class="faq-answer">
+                    <p><b>TIDAK ADA JAMINAN PROFIT.</b> Harus dipahami bahwa indikator adalah *alat bantu* analisa, bukan mesin pencetak uang otomatis. Trading memiliki risiko yang sangat tinggi. Indikator ini membantu Anda mengambil keputusan yang lebih baik, tapi manajemen risiko dan disiplin trading tetap ada di tangan Anda. Jangan pernah trading dengan uang yang Anda tidak siap kehilangannya.</p>
+                </div>
+            </div>
+
+            <div class="faq-item hidden-fade">
+                <button class="faq-question">
+                    <span>Bagaimana cara saya mendapatkan indikator ini setelah bayar?</span>
+                    <i class="fas fa-chevron-down faq-icon"></i>
+                </button>
+                <div class="faq-answer">
+                    <p>Prosesnya sangat mudah. Setelah Anda melakukan pembayaran, Anda hanya perlu memberikan kami **Username TradingView** Anda. Kami akan memberikan akses *invite-only* ke skrip indikator ini. Indikator akan langsung muncul di menu "Invite-Only Scripts" di akun TradingView Anda.</p>
+                </div>
+            </div>
+
+        </div>
+    </section>
+    
+    <section class="about-disclaimer">
+        <p>EPSILONE adalah brand untuk alat bantu (tools) analisa trading. Semua produk, termasuk indikator, skrip, atau sinyal, HANYA untuk tujuan edukasi dan informasi. Trading adalah aktivitas berisiko tinggi.</p>
+    </section>
+
+    <footer class="footer">
+        <div class="footer-grid">
+            
+            <div class="footer-column social">
+                <h4>Social Media</h4>
+                <div class="footer-social-links">
+                    <a href="https://www.instagram.com/_alfath.kurnia/?__pwa=1#" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+
+            <div class="footer-column contact">
+                <h4>Kontak</h4>
+                <ul class="footer-contact-list">
+                    <li>
+                        <a href="mailto:investwithepsilone@gmail.com">investwithepsilone@gmail.com</a>
+                        <i class="fas fa-envelope"></i>
+                    </li>
+                    <li>
+                        <a href="https://wa.me/6281213483500" target="_blank">0812-1348-3500</a>
+                        <i class="fab fa-whatsapp"></i>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-about">
+            <p>EPSILONE adalah platform edukasi dan penyedia alat bantu trading. Kami tidak menyediakan saran investasi. Trading berisiko tinggi dan Anda bisa kehilangan modal Anda.</p>
+        </div>
+
+        <div class="footer-bottom">
+            <p>
+                © 2025 EPSILONE. All Rights Reserved. Dikelola oleh MAKE.
+                <a href="terms-condition.html">Terms & Condition</a>
+                <a href="privacy-policy.html">Privacy Policy</a>
+                <a href="refund-policy.html">Refund Policy</a>
+            </p>
+        </div>
+    </footer>
+
+    <!-- === KODE JAVASCRIPT (HEADER + FAQ + ANIMASI SCROLL) === -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            
+            // --- Skrip untuk Header Mengecil ---
+            const header = document.querySelector('.header');
+            if (header) {
+                window.addEventListener('scroll', function() {
+                    if (window.scrollY > 50) {
+                        header.classList.add('header-scrolled');
+                    } else {
+                        header.classList.remove('header-scrolled');
+                    }
+                });
+            }
+
+            // --- Skrip untuk FAQ Interaktif ---
+            const faqItems = document.querySelectorAll('.faq-item');
+            faqItems.forEach(item => {
+                const question = item.querySelector('.faq-question');
+                question.addEventListener('click', () => {
+                    item.classList.toggle('active');
+                });
+            });
+
+            // === SKRIP BARU UNTUK ANIMASI FADE-IN SAAT SCROLL ===
+            const elementsToFade = document.querySelectorAll('.hidden-fade');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible-fade');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, {
+                threshold: 0.1 
+            });
+            elementsToFade.forEach(element => {
+                observer.observe(element);
+            });
+            // === SKRIP ANIMASI SELESAI ===
+
+        });
+    </script>
+</body>
+</html>
